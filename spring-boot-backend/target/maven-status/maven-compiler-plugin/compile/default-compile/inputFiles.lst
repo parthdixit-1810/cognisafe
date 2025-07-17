@@ -1,0 +1,12 @@
+/Users/parthdixit/Desktop/password-protector/spring-boot-backend/src/main/java/com/example/passwordvault/repository/UserRepository.java
+/Users/parthdixit/Desktop/password-protector/spring-boot-backend/src/main/java/com/example/passwordvault/util/PasswordUtil.java
+/Users/parthdixit/Desktop/password-protector/spring-boot-backend/src/main/java/com/example/passwordvault/controller/AuthController.java
+/Users/parthdixit/Desktop/password-protector/spring-boot-backend/src/main/java/com/example/passwordvault/service/PasswordService.java
+/Users/parthdixit/Desktop/password-protector/spring-boot-backend/src/main/java/com/example/passwordvault/controller/PasswordController.java
+/Users/parthdixit/Desktop/password-protector/spring-boot-backend/src/main/java/com/example/passwordvault/model/PasswordEntry.java
+/Users/parthdixit/Desktop/password-protector/spring-boot-backend/src/main/java/com/example/passwordvault/repository/PasswordEntryRepository.java
+/Users/parthdixit/Desktop/password-protector/spring-boot-backend/src/main/java/com/example/passwordvault/config/CorsConfig.java
+/Users/parthdixit/Desktop/password-protector/spring-boot-backend/src/main/java/com/example/passwordvault/model/User.java
+/Users/parthdixit/Desktop/password-protector/spring-boot-backend/src/main/java/com/example/passwordvault/PasswordVaultApplication.java
+/Users/parthdixit/Desktop/password-protector/spring-boot-backend/src/main/java/com/example/passwordvault/controller/GlobalExceptionHandler.java
+/Users/parthdixit/Desktop/password-protector/spring-boot-backend/src/main/java/com/example/passwordvault/service/UserService.java
