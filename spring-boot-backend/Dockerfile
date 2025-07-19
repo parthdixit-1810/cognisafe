@@ -4,11 +4,18 @@ FROM openjdk:17-jdk-slim
 # Set working directory
 WORKDIR /app
 
-# Copy the JAR file
-COPY target/passwordvault-0.0.1-SNAPSHOT.jar app.jar
+# Copy Maven files first for better caching
+COPY pom.xml .
+COPY src ./src
+
+# Install Maven
+RUN apt-get update && apt-get install -y maven
+
+# Build the application
+RUN mvn clean package -DskipTests
 
 # Expose port 8080
 EXPOSE 8080
 
 # Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"] 
+ENTRYPOINT ["java", "-jar", "target/passwordvault-0.0.1-SNAPSHOT.jar"] 
