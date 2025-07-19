@@ -1,4 +1,7 @@
 com/example/passwordvault/controller/AuthController.class
+com/example/passwordvault/controller/GlobalExceptionHandler.class
+com/example/passwordvault/config/CorsConfig.class
+com/example/passwordvault/config/CorsConfig$1.class
 com/example/passwordvault/util/PasswordUtil.class
 com/example/passwordvault/PasswordVaultApplication.class
 com/example/passwordvault/repository/PasswordEntryRepository.class

@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: cognisafe-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: Ad@121964
+      MYSQL_DATABASE: cognisafe
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - cognisafe-network
+
+  app:
+    build: .
+    container_name: cognisafe-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/cognisafe
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Ad@121964
+    depends_on:
+      - mysql
+    networks:
+      - cognisafe-network
+
+volumes:
+  mysql_data:
+
+networks:
+  cognisafe-network:
+    driver: bridge 
