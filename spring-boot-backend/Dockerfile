@@ -17,5 +17,5 @@ RUN mvn clean package -DskipTests
 # Expose port 8080
 EXPOSE 8080
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "target/passwordvault-0.0.1-SNAPSHOT.jar"] 
+# Run the application with test profile (no database)
+ENTRYPOINT ["java", "-jar", "target/passwordvault-0.0.1-SNAPSHOT.jar", "--spring.profiles.active=test"] 
