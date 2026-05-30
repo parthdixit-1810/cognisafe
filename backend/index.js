@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { encrypt, decrypt } = require('./cryptoUtil');
 const { OAuth2Client } = require('google-auth-library');
-const nodemailer = require('nodemailer');
+// nodemailer removed — using Resend API (SMTP blocked on Render free tier)
 const crypto = require('crypto');
 const Stripe = require('stripe');
 
@@ -95,43 +95,40 @@ const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
 const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
-// Email transporter (configure for your email provider)
-const transporter = nodemailer.createTransport({
-  service: 'gmail', // or your provider
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-function send2FACode(email, code) {
-  return transporter.sendMail({
-    from: `"CogniSafe" <${process.env.EMAIL_USER}>`,
-    to: email,
-    subject: `${code} is your CogniSafe verification code`,
-    text: `Your CogniSafe 2FA code is: ${code}\n\nThis code expires in 10 minutes. If you didn't request this, you can safely ignore this email.`,
-    html: `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;padding:0;background:#050c18;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+// Send 2FA code via Resend API (works on Render — uses HTTPS not SMTP)
+async function send2FACode(email, code) {
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: 'CogniSafe <onboarding@resend.dev>',
+      to: email,
+      subject: `${code} is your CogniSafe verification code`,
+      html: `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#050c18;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#050c18;padding:40px 20px">
 <tr><td align="center">
 <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#0d1626;border:1px solid rgba(37,99,235,.3);border-radius:16px;overflow:hidden">
-<tr><td style="background:linear-gradient(135deg,#1d4ed8,#2563eb,#0ea5e9);padding:32px;text-align:center">
-<div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:-0.5px">CogniSafe</div>
+<tr><td style="background:linear-gradient(135deg,#1d4ed8,#2563eb);padding:32px;text-align:center">
+<div style="font-size:22px;font-weight:900;color:#fff">CogniSafe</div>
 <div style="font-size:13px;color:rgba(255,255,255,.7);margin-top:4px">Personal Password Vault</div>
 </td></tr>
 <tr><td style="padding:36px 32px;text-align:center">
 <div style="font-size:14px;color:#8892b0;margin-bottom:24px">Your verification code</div>
 <div style="font-size:48px;font-weight:900;color:#60a5fa;letter-spacing:10px;font-family:monospace">${code}</div>
 <div style="margin:24px 0;height:1px;background:rgba(255,255,255,.06)"></div>
-<p style="font-size:13px;color:#8892b0;line-height:1.7;margin:0">This code expires in <strong style="color:#f0f4ff">10 minutes</strong>.<br>If you didn't request this, you can safely ignore this email.</p>
+<p style="font-size:13px;color:#8892b0;line-height:1.7;margin:0">Expires in <strong style="color:#f0f4ff">10 minutes</strong>. If you didn't request this, ignore this email.</p>
 </td></tr>
-<tr><td style="padding:20px 32px;border-top:1px solid rgba(255,255,255,.06);text-align:center">
-<div style="font-size:12px;color:#4a5568">© 2025 CogniSafe — Your data stays yours.</div>
-</td></tr>
-</table>
-</td></tr>
-</table>
+</table></td></tr></table>
 </body></html>`,
+    }),
   });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(`Resend error: ${err.message || res.status}`);
+  }
 }
 
 function generate2FACode() {
