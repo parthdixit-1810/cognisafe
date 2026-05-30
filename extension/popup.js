@@ -29,6 +29,8 @@ const el = (tag, attrs = {}, ...children) => {
   return e;
 };
 
+const API = 'https://cognisafe-541n.onrender.com';
+
 function getToken() {
   return new Promise(r => chrome.storage.local.get('token', d => r(d.token || null)));
 }
@@ -39,16 +41,17 @@ function clearToken() {
   return new Promise(r => chrome.storage.local.remove('token', r));
 }
 
-function api(path, method = 'GET', body) {
-  return new Promise((resolve, reject) => {
-    chrome.runtime.sendMessage(
-      { type: 'API', path, method, body, token: state.token },
-      res => {
-        if (res?.__error) reject(new Error(res.__error));
-        else resolve(res);
-      }
-    );
+async function api(path, method = 'GET', body) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (state.token) headers['Authorization'] = `Bearer ${state.token}`;
+  const res = await fetch(API + path, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined,
   });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+  return data;
 }
 
 function extractDomain(url) {
