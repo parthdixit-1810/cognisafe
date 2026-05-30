@@ -154,7 +154,8 @@ app.post('/api/auth/signup', async (req, res) => {
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
     res.json({ token, user: { id: user.id, email: user.email } });
   } catch (err) {
-    res.status(500).json({ error: 'Signup failed.' });
+    console.error('SIGNUP ERROR:', err);
+    res.status(500).json({ error: 'Signup failed.', detail: err.message });
   }
 });
 
@@ -186,7 +187,8 @@ app.post('/api/auth/login', async (req, res) => {
     await send2FACode(user.email, code);
     return res.json({ twoFactorRequired: true, userId: user.id });
   } catch (err) {
-    res.status(500).json({ error: 'Login failed.' });
+    console.error('LOGIN ERROR:', err);
+    res.status(500).json({ error: 'Login failed.', detail: err.message });
   }
 });
 
