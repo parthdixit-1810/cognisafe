@@ -176,13 +176,17 @@ app.post('/api/auth/login', async (req, res) => {
         return res.json({ token, user: { id: user.id, email: user.email }, deviceTrusted: true });
       }
     }
-    // Always require 2FA
-    const code = generate2FACode();
-    const hash = hashCode(code);
-    const expires = new Date(Date.now() + 10 * 60 * 1000);
-    await prisma.user.update({ where: { id: user.id }, data: { twoFactorTempCode: hash, twoFactorTempExpires: expires } });
-    await send2FACode(user.email, code);
-    return res.json({ twoFactorRequired: true, userId: user.id });
+    // Only require 2FA if user has enabled it
+    if (user.twoFactorEnabled) {
+      const code = generate2FACode();
+      const hash = hashCode(code);
+      const expires = new Date(Date.now() + 10 * 60 * 1000);
+      await prisma.user.update({ where: { id: user.id }, data: { twoFactorTempCode: hash, twoFactorTempExpires: expires } });
+      await send2FACode(user.email, code);
+      return res.json({ twoFactorRequired: true, userId: user.id });
+    }
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
+    return res.json({ token, user: { id: user.id, email: user.email } });
   } catch (err) {
     console.error('LOGIN ERROR:', err);
     res.status(500).json({ error: 'Login failed.', detail: err.message });
