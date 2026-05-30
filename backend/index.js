@@ -16,7 +16,7 @@ const app = express();
 const prisma = new PrismaClient();
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder');
 
-const allowedOrigin = process.env.FRONTEND_URL || 'http://localhost:3000';
+const allowedOrigin = (process.env.FRONTEND_URL || 'http://localhost:3000').replace(/\/$/, '');
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || origin === allowedOrigin ||
