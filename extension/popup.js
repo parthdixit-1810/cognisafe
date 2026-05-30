@@ -141,7 +141,15 @@ function renderLogin() {
   pwField.appendChild(pwIn);
   wrap.appendChild(pwField);
 
-  const btn = el('button', { className: 'btn btn-primary', onClick: doLogin }, 'Sign in');
+  const btn = el('button', { className: 'btn btn-primary', onClick: doLogin });
+  if (state.loading) {
+    const sp = el('span', { className: 'spinner' });
+    btn.appendChild(sp);
+    btn.appendChild(document.createTextNode(' Signing in…'));
+    btn.disabled = true;
+  } else {
+    btn.appendChild(document.createTextNode('Sign in'));
+  }
   wrap.appendChild(btn);
 
   pwIn.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
@@ -150,11 +158,14 @@ function renderLogin() {
 }
 
 async function doLogin() {
-  state.error = '';
-  state.loading = true;
   const email    = $('login-email')?.value?.trim() || '';
   const password = $('login-pw')?.value || '';
-  if (!email || !password) { state.error = 'Please fill in all fields.'; state.loading = false; render(); return; }
+  if (!email || !password) { state.error = 'Please fill in all fields.'; render(); return; }
+
+  state.error   = '';
+  state.loading = true;
+  render(); // show spinner immediately
+
   try {
     const data = await api('/api/auth/login', 'POST', { email, password });
     if (data.twoFactorRequired) {
@@ -167,7 +178,7 @@ async function doLogin() {
       state.screen = 'main';
     }
   } catch (err) {
-    state.error = err.message || 'Login failed.';
+    state.error = err.message || 'Login failed. Check your connection.';
   } finally {
     state.loading = false;
     render();
