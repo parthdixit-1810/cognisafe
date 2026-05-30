@@ -1,0 +1,14 @@
+{
+  "name": "CogniSafe — Personal Password Vault",
+  "short_name": "CogniSafe",
+  "description": "Secure, zero-knowledge password manager with AES-256 encryption.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050c18",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/cognisafe-logo.jpg", "sizes": "192x192", "type": "image/jpeg", "purpose": "any maskable" },
+    { "src": "/cognisafe-logo.jpg", "sizes": "512x512", "type": "image/jpeg", "purpose": "any maskable" }
+  ]
+}
