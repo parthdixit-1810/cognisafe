@@ -1,6 +1,6 @@
 // Background service worker — handles API calls from popup
 
-const API = 'https://cognisafe-latest.onrender.com'; // ← update to your Render URL
+const API = 'https://cognisafe-541n.onrender.com';
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === 'API') {
